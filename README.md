@@ -74,7 +74,7 @@ runtime from `/run/secrets/mautic`.
 
 ## 🔒 Security Considerations
 
-**Secrets are safe from:** - `docker-compose.yaml` - Git commits -
+**Secrets are safe from:** - `compose.yaml` - Git commits -
 `docker inspect` output
 
 **Secrets are accessible to:** - Processes inside the container
