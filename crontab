@@ -2,16 +2,16 @@
 # Mautic core cron jobs
 ###########################
 
-*/5 * * * * cd /stacks/mautic && sudo -u deploy /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:segments:update >> /var/log/mautic_segments.log 2>&1
+*/5 * * * * cd /stacks/mautic && sudo -u yourusername /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:segments:update >> /var/log/mautic_segments.log 2>&1
 
-*/5 * * * * cd /stacks/mautic && sudo -u deploy /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:campaigns:update >> /var/log/mautic_campaigns_update.log 2>&1
+*/5 * * * * cd /stacks/mautic && sudo -u yourusername /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:campaigns:update >> /var/log/mautic_campaigns_update.log 2>&1
 
-* * * * * cd /stacks/mautic && sudo -u deploy /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:campaigns:trigger >> /var/log/mautic_campaigns_trigger.log 2>&1
+* * * * * cd /stacks/mautic && sudo -u yourusername /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:campaigns:trigger >> /var/log/mautic_campaigns_trigger.log 2>&1
 
-*/5 * * * * cd /stacks/mautic && sudo -u deploy /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:broadcasts:send >> /var/log/mautic_broadcasts.log 2>&1
+*/5 * * * * cd /stacks/mautic && sudo -u yourusername /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console mautic:broadcasts:send >> /var/log/mautic_broadcasts.log 2>&1
 
 ###########################
-# Throttled queue consumer (00:00–06:00 UTC)
+# Throttled queue consumer (set your own active hours)
 ###########################
 
-*/5 0-5 * * * cd /stacks/mautic && sudo -u deploy /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console messenger:consume email --limit=3 --time-limit=240 --memory-limit=256M >> /var/log/mautic_messenger_email.log 2>&1
+*/5 0-5 * * * cd /stacks/mautic && sudo -u yourusername /usr/bin/docker compose exec -T mautic php /var/www/html/bin/console messenger:consume email --limit=3 --time-limit=240 --memory-limit=256M >> /var/log/mautic_messenger_email.log 2>&1

@@ -2,10 +2,10 @@ services:
   db:
     image: mariadb:10.11
     environment:
-      MARIADB_DATABASE: mautic_db
-      MARIADB_USER: webadmin_db
-      MARIADB_PASSWORD_FILE: /run/secrets/mautic/mautic_db_password
-      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mautic/mautic_db_root_password
+      MARIADB_DATABASE: your_database_name
+      MARIADB_USER: your_username
+      MARIADB_PASSWORD_FILE: /my/secrets/folder/mautic_db_password #Replace with path to your database password file
+      MARIADB_ROOT_PASSWORD_FILE: /my/secrets/folder/mautic_db_root_password #Replace with path to your database root password file
 
     command:
       - --character-set-server=utf8mb4
@@ -17,14 +17,14 @@ services:
       - /run/secrets/mautic:/run/secrets/mautic:ro
 
     healthcheck:
-      # use CMD-SHELL so we can cat the root password from the secret file
-      test: ["CMD-SHELL", "mysqladmin ping -p$(cat /run/secrets/mautic/mautic_db_root_password)"]
+      # Cat the root password from the secret file
+      test: ["CMD-SHELL", "mysqladmin ping -p$(cat /my/secrets/folder/mautic_db_root_password)"] #Replace with path to your database root password file
       interval: 10s
       timeout: 5s
       retries: 30
 
     networks:
-      - bounded-net
+      - my-network #Replace with your network name
     restart: unless-stopped
 
   redis:
@@ -33,7 +33,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - bounded-net
+      - my-network #Replace with your network name
     restart: unless-stopped
 
   mautic:
@@ -47,9 +47,9 @@ services:
       #Credentials will be injected by entrypoint
       MAUTIC_DB_HOST: db
       MAUTIC_DB_PORT: "3306"
-      MAUTIC_DB_NAME: mautic_db
-      MAUTIC_DB_USER: webadmin_db
-      MAUTIC_URL: https://mautic.boundedstudios.com
+      MAUTIC_DB_NAME: your_database_name
+      MAUTIC_DB_USER: your_username
+      MAUTIC_URL: https://mautic.yourdomain.com #Replace with your Mautic domain name
 
       # trust traefik / cloudflare
       MAUTIC_TRUSTED_PROXIES: '["0.0.0.0/0","::/0"]'
@@ -65,17 +65,17 @@ services:
       - mautic_var:/var/www/html/var
       - mautic_media:/var/www/html/media
       - mautic_config:/var/www/html/config
-      - /run/secrets/mautic:/run/secrets/mautic:ro
+      - /my/secrets/folder/:/my/secrets/folder/:ro #Replace with path to your secrets folder
 
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mautic.rule=Host(`mautic.boundedstudios.com`)
+      - traefik.http.routers.mautic.rule=Host(`mautic.yourdomain.com`)
       - traefik.http.routers.mautic.entrypoints=websecure
       - traefik.http.routers.mautic.tls.certresolver=le
       - traefik.http.services.mautic.loadbalancer.server.port=80
 
-      # CORS so boundedstudios.com can embed Mautic forms
-      - traefik.http.middlewares.mautic-cors.headers.accessControlAllowOriginList=https://boundedstudios.com,https://www.boundedstudios.com
+      # CORS so yourdomain.com can embed Mautic forms
+      - traefik.http.middlewares.mautic-cors.headers.accessControlAllowOriginList=https://yourdomain.com.com,https://www.yourdomain.com
       - traefik.http.middlewares.mautic-cors.headers.accessControlAllowMethods=GET,POST,OPTIONS
       - traefik.http.middlewares.mautic-cors.headers.accessControlAllowHeaders=Content-Type,Accept,X-Requested-With,Authorization
       - traefik.http.middlewares.mautic-cors.headers.accessControlAllowCredentials=true

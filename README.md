@@ -1,6 +1,8 @@
 Production-ready Mautic 5 stack running under Docker.\
 Uses MariaDB, Redis, and a custom Mautic image that loads secrets at
-runtime from `/run/secrets/mautic`.
+runtime from `/your/secret/dir/`.
+
+Internal service names, credentials, and infrastructure identifiers have been replaced to avoid leaking production details.
 
 ------------------------------------------------------------------------
 
@@ -16,7 +18,7 @@ runtime from `/run/secrets/mautic`.
 -   **Dockerfile** -- Extends `mautic/mautic:5-apache`, adds PHP Redis
     extension, and installs the custom entrypoint.
 -   **docker-entrypoint-mautic.sh** -- Loads secrets from
-    `/run/secrets/mautic` and passes control to Mautic's upstream
+    `/your/secret/dir` and passes control to Mautic's upstream
     entrypoint.
 
 ------------------------------------------------------------------------
@@ -37,11 +39,9 @@ runtime from `/run/secrets/mautic`.
 
 ### **MariaDB 10.11**
 
--   Static (non-secret) database name: `mautic_db`
--   Static database user: `webadmin_db`
 -   Loads passwords via:
-    -   `MARIADB_PASSWORD_FILE=/run/secrets/mautic/mautic_db_password`
-    -   `MARIADB_ROOT_PASSWORD_FILE=/run/secrets/mautic/mautic_db_root_password`
+    -   `MARIADB_PASSWORD_FILE=/your/secret/dir/mautic_db_password`
+    -   `MARIADB_ROOT_PASSWORD_FILE=/your/secret/dir/mautic_db_root_password`
 -   Persists data in `db_data`
 
 ### **Redis**
@@ -79,10 +79,10 @@ runtime from `/run/secrets/mautic`.
 
 **Secrets are accessible to:** - Processes inside the container
 (expected) - Anyone with `docker exec` access - Anyone with host
-filesystem access to `/run/secrets/mautic`
+filesystem access to `/your/secret/dir/`
 
 Lock down: - SSH access - Membership in the `docker` group - Permissions
-on `/run/secrets/mautic`
+on `/your/secret/dir/`
 
 ------------------------------------------------------------------------
 
@@ -91,4 +91,4 @@ on `/run/secrets/mautic`
 -   Docker 24+
 -   Docker Compose V2
 -   External Traefik stack (`infra-traefik`)
--   External network: `bounded-net`
+-   External network: `my-network`
